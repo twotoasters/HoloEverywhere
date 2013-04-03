@@ -1,6 +1,8 @@
 
 package org.holoeverywhere;
 
+import org.holoeverywhere.addon.IAddonAttacher;
+import org.holoeverywhere.addon.IAddonFragment;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.preference.SharedPreferences;
 
@@ -13,10 +15,14 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.internal.view.menu.ContextMenuDecorView.ContextMenuListenersProvider;
 import com.actionbarsherlock.internal.view.menu.ContextMenuListener;
+import com.actionbarsherlock.view.ActionMode;
 
 public interface IHoloFragment extends IHolo, OnPrepareOptionsMenuListener,
-        OnCreateOptionsMenuListener, OnOptionsItemSelectedListener, ContextMenuListener {
+        OnCreateOptionsMenuListener, OnOptionsItemSelectedListener, ContextMenuListener,
+        ContextMenuListenersProvider, IAddonAttacher<IAddonFragment> {
     @Override
     public SharedPreferences getDefaultSharedPreferences();
 
@@ -24,6 +30,8 @@ public interface IHoloFragment extends IHolo, OnPrepareOptionsMenuListener,
 
     @Override
     public SharedPreferences getSharedPreferences(String name, int mode);
+
+    public ActionBar getSupportActionBar();
 
     public Activity getSupportActivity();
 
@@ -36,4 +44,6 @@ public interface IHoloFragment extends IHolo, OnPrepareOptionsMenuListener,
             Bundle savedInstanceState);
 
     public View prepareDecorView(View view);
+
+    public ActionMode startActionMode(ActionMode.Callback callback);
 }

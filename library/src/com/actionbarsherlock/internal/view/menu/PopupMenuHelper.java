@@ -7,6 +7,7 @@ import org.holoeverywhere.LayoutInflater;
 import org.holoeverywhere.R;
 import org.holoeverywhere.widget.FrameLayout;
 import org.holoeverywhere.widget.ListPopupWindow;
+import org.holoeverywhere.widget.PopupWindow;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -20,7 +21,6 @@ import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
-import android.widget.PopupWindow;
 
 import com.actionbarsherlock.internal.view.View_HasStateListenerSupport;
 import com.actionbarsherlock.internal.view.View_OnAttachStateChangeListener;
@@ -93,14 +93,14 @@ public class PopupMenuHelper implements AdapterView.OnItemClickListener,
             }
             MenuView.ItemView itemView = (MenuView.ItemView) convertView;
             if (mForceShowIcon) {
-                ((ListMenuItemView) convertView).setForceShowIcon(true);
+                ((HoloListMenuItemView) convertView).setForceShowIcon(true);
             }
             itemView.initialize(getItem(position), 0);
             return convertView;
         }
     }
 
-    static final int ITEM_LAYOUT = R.layout.abs__popup_menu_item_layout;
+    static final int ITEM_LAYOUT = R.layout.popup_menu_item_layout;
     private MenuAdapter mAdapter;
     private View mAnchorView;
     private Context mContext;
@@ -121,7 +121,7 @@ public class PopupMenuHelper implements AdapterView.OnItemClickListener,
         mMenu = menu;
         final Resources res = context.getResources();
         mPopupMaxWidth = Math.max(res.getDisplayMetrics().widthPixels / 2,
-                res.getDimensionPixelSize(R.dimen.abs__config_prefDialogWidth));
+                res.getDimensionPixelSize(R.dimen.config_prefDialogWidth));
         mAnchorView = decorView;
         menu.addMenuPresenter(this);
     }

@@ -117,7 +117,7 @@ public class GridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.list_content, container, false);
+        return inflater.inflate(R.layout.grid_content, container, false);
     }
 
     @Override
@@ -134,8 +134,8 @@ public class GridFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view) {
-        super.onViewCreated(view);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         ensureGrid();
     }
 

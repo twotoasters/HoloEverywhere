@@ -2,10 +2,10 @@
 package org.holoeverywhere.demo.fragments.lists;
 
 import org.holoeverywhere.ArrayAdapter;
-import org.holoeverywhere.app.ListFragment;
 import org.holoeverywhere.demo.R;
 import org.holoeverywhere.widget.ListView;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
 
@@ -13,11 +13,17 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class ListsChoiceModeMultiplueFragment extends ListFragment {
+public class ListsChoiceModeMultiplueFragment extends ListsBaseFragment {
     private ListView mList;
 
     @Override
+    protected CharSequence getTitle() {
+        return "Lists: Choice mode: Multiplue";
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.lists_choice_mode_mulitplue, menu);
     }
 
@@ -37,8 +43,8 @@ public class ListsChoiceModeMultiplueFragment extends ListFragment {
     }
 
     @Override
-    public void onViewCreated(View view) {
-        super.onViewCreated(view);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
         mList = getListView();
         mList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
