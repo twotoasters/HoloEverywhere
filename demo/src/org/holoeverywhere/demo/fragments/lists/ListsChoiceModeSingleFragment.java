@@ -2,19 +2,24 @@
 package org.holoeverywhere.demo.fragments.lists;
 
 import org.holoeverywhere.ArrayAdapter;
-import org.holoeverywhere.app.ListFragment;
 import org.holoeverywhere.demo.R;
 import org.holoeverywhere.widget.ListView;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
 
-public class ListsChoiceModeSingleFragment extends ListFragment {
+public class ListsChoiceModeSingleFragment extends ListsBaseFragment {
     private ListView mList;
 
     @Override
-    public void onViewCreated(View view) {
-        super.onViewCreated(view);
+    protected CharSequence getTitle() {
+        return "Lists: Choice mode: Single";
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mList = getListView();
         mList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         setListAdapter(ArrayAdapter.createFromResource(getActivity(), R.array.adjectives,

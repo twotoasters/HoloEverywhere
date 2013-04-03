@@ -9,49 +9,46 @@
 	<parent>
 		<groupId>org.holoeverywhere</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.4.2</version>
+		<version>1.5.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
+			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.actionbarsherlock</groupId>
 			<artifactId>actionbarsherlock</artifactId>
 			<type>apklib</type>
 		</dependency>
+
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>support-v4</artifactId>
-			<version>r7</version>
 		</dependency>
 	</dependencies>
 
+
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-
 		<plugins>
 			<plugin>
 				<groupId>org.holoeverywhere</groupId>
-				<artifactId>builder</artifactId>
+				<artifactId>resbuilder</artifactId>
 				<configuration>
-					<input>
-						<param>styles.json</param>
-						<param>styles-v14.json</param>
-					</input>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.holoeverywhere</groupId>
-				<artifactId>translator</artifactId>
-				<configuration>
-					<input>
-						<param>strings.json</param>
-					</input>
+					<buildAll>false</buildAll>
+					<inputFiles>
+						<file>strings.json:strings</file>
+						<file>styles-v7.json:styles</file>
+						<file>styles-v14.json:styles</file>
+						<file>styles-large.json:styles</file>
+						<file>dialogs.json:styles</file>
+						<file>attrs.json:attrs</file>
+					</inputFiles>
 				</configuration>
 			</plugin>
 
@@ -59,55 +56,7 @@
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jarsigner-plugin</artifactId>
-				<inherited>true</inherited>
-			</plugin>
 		</plugins>
-
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.holoeverywhere</groupId>
-										<artifactId>builder</artifactId>
-										<versionRange>[1.4.0,)</versionRange>
-										<goals>
-											<goal>build</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.holoeverywhere</groupId>
-										<artifactId>translator</artifactId>
-										<versionRange>[1.4.0,)</versionRange>
-										<goals>
-											<goal>build</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<profiles>
@@ -147,6 +96,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.7</version>
 						<configuration>
 							<artifacts>
 								<artifact>

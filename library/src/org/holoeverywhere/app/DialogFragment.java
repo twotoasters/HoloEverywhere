@@ -38,18 +38,26 @@ public class DialogFragment extends Fragment implements
         return findInstance(activity, clazz, false);
     }
 
-    @SuppressWarnings("unchecked")
     public static final <T extends DialogFragment> T findInstance(Activity activity,
             Class<T> clazz, boolean makeIfNeed) {
         if (activity == null || clazz == null) {
             throw new IllegalArgumentException("Activity of DialogFragment class is null");
         }
+        return findInstance(activity.getSupportFragmentManager(), clazz, makeIfNeed);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static final <T extends DialogFragment> T findInstance(FragmentManager fm,
+            Class<T> clazz, boolean makeIfNeed) {
+        if (fm == null || clazz == null) {
+            throw new IllegalArgumentException("FragmentManager of DialogFragment class is null");
+        }
         T fragment;
+        final String tag = makeTag(clazz);
         try {
-            fragment = (T) activity.getSupportFragmentManager().findFragmentByTag(makeTag(clazz));
-            if (fragment == null) {
-                fragment = (T) android.support.v4.app.Fragment.instantiate(activity,
-                        clazz.getName());
+            fragment = (T) fm.findFragmentByTag(tag);
+            if (fragment == null && makeIfNeed) {
+                fragment = Fragment.instantiate(clazz);
             }
         } catch (Exception e) {
             throw new RuntimeException("Error of finding DialogFragment instance", e);
@@ -115,6 +123,7 @@ public class DialogFragment extends Fragment implements
     }
 
     @Override
+    @Deprecated
     public LayoutInflater getLayoutInflater(Bundle savedInstanceState) {
         if (!mShowsDialog) {
             return super.getLayoutInflater(savedInstanceState);

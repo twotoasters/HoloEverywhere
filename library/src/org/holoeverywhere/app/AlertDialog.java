@@ -4,7 +4,9 @@ package org.holoeverywhere.app;
 import org.holoeverywhere.R;
 import org.holoeverywhere.internal.AlertController;
 import org.holoeverywhere.internal.AlertController.AlertDecorViewInstaller;
+import org.holoeverywhere.internal.AlertController.AlertParams;
 import org.holoeverywhere.internal.AlertController.AlertParams.OnPrepareListViewListener;
+import org.holoeverywhere.widget.Button;
 import org.holoeverywhere.widget.ListView;
 
 import android.content.Context;
@@ -13,13 +15,10 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Message;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListAdapter;
 
 public class AlertDialog extends Dialog implements DialogInterface,
@@ -28,30 +27,30 @@ public class AlertDialog extends Dialog implements DialogInterface,
         private static final Class<?>[] CONSTRUCTOR_SIGNATURE = {
                 Context.class, int.class
         };
-        private Class<? extends AlertDialog> clazz;
+        private Class<? extends AlertDialog> mDialogClass;
         private final AlertController.AlertParams P;
 
-        private final String TAG = getClass().getSimpleName();
-
         public Builder(Context context) {
-            this(context, AlertDialog.resolveDialogTheme(context, 0));
+            this(context, 0);
         }
 
         public Builder(Context context, int theme) {
-            P = new AlertController.AlertParams(new ContextThemeWrapper(
-                    context, AlertDialog.resolveDialogTheme(context, theme)));
-            P.mTheme = theme;
+            P = new AlertParams(context, theme);
+        }
+
+        public Builder addButtonBehavior(int buttonBehavior) {
+            P.mButtonBehavior |= buttonBehavior;
+            return this;
         }
 
         public AlertDialog create() {
             AlertDialog dialog = null;
-            if (clazz != null) {
+            if (mDialogClass != null) {
                 try {
-                    dialog = clazz.getConstructor(CONSTRUCTOR_SIGNATURE).newInstance(P.mContext,
-                            P.mTheme);
+                    dialog = mDialogClass.getConstructor(CONSTRUCTOR_SIGNATURE).newInstance(
+                            P.mContext, P.mTheme);
                 } catch (Exception e) {
-                    Log.e(TAG, "Cannot create AlertDialog instance from clazz " + clazz.getName()
-                            + ", use default", e);
+                    e.printStackTrace();
                 }
             }
             if (dialog == null) {
@@ -78,6 +77,12 @@ public class AlertDialog extends Dialog implements DialogInterface,
             return P.mContext;
         }
 
+        public Builder removeButtonBehavior(int buttonBehavior) {
+            P.mButtonBehavior |= buttonBehavior;
+            P.mButtonBehavior ^= buttonBehavior;
+            return this;
+        }
+
         public Builder setAdapter(final ListAdapter adapter,
                 final OnClickListener listener) {
             P.mAdapter = adapter;
@@ -86,7 +91,16 @@ public class AlertDialog extends Dialog implements DialogInterface,
         }
 
         public Builder setAlertDialogClass(Class<? extends AlertDialog> clazz) {
-            this.clazz = clazz;
+            mDialogClass = clazz;
+            return this;
+        }
+
+        public Builder setBlockDismiss(boolean blockDismiss) {
+            return setButtonBehavior(blockDismiss ? 0 : DISMISS_ON_ALL);
+        }
+
+        public Builder setButtonBehavior(int buttonBehavior) {
+            P.mButtonBehavior = buttonBehavior;
             return this;
         }
 
@@ -294,6 +308,11 @@ public class AlertDialog extends Dialog implements DialogInterface,
             return this;
         }
 
+        public Builder setTheme(int theme) {
+            P.mTheme = theme;
+            return this;
+        }
+
         public Builder setTitle(CharSequence title) {
             P.mTitle = title;
             return this;
@@ -328,6 +347,11 @@ public class AlertDialog extends Dialog implements DialogInterface,
         }
     }
 
+    public static final int DISMISS_ON_ALL = 7; // DO_NEG | DO_NEU | DO_POS
+    public static final int DISMISS_ON_NEGATIVE = 1 << 0; // -BUTTON_NEGATIVE;
+    public static final int DISMISS_ON_NEUTRAL = 1 << 1; // -BUTTON_NEUTRAL;
+    public static final int DISMISS_ON_POSITIVE = 1 << 2; // -BUTTON_POSITIVE;
+
     public static final int THEME_HOLO_DARK = 1;
     public static final int THEME_HOLO_LIGHT = 2;
 
@@ -340,8 +364,7 @@ public class AlertDialog extends Dialog implements DialogInterface,
             return resid;
         } else {
             TypedValue outValue = new TypedValue();
-            context.getTheme().resolveAttribute(R.attr.alertDialogTheme,
-                    outValue, true);
+            context.getTheme().resolveAttribute(R.attr.alertDialogTheme, outValue, true);
             return outValue.resourceId;
         }
     }
@@ -349,13 +372,12 @@ public class AlertDialog extends Dialog implements DialogInterface,
     private final AlertController mAlert;
 
     protected AlertDialog(Context context) {
-        this(context, false, null, AlertDialog.resolveDialogTheme(context, 0));
+        this(context, true, null, 0);
     }
 
     protected AlertDialog(Context context, boolean cancelable,
             OnCancelListener cancelListener) {
-        this(context, cancelable, cancelListener, AlertDialog
-                .resolveDialogTheme(context, 0));
+        this(context, cancelable, cancelListener, 0);
     }
 
     protected AlertDialog(Context context, boolean cancelable,
@@ -363,11 +385,11 @@ public class AlertDialog extends Dialog implements DialogInterface,
         super(context, AlertDialog.resolveDialogTheme(context, theme));
         setCancelable(cancelable);
         setOnCancelListener(cancelListener);
-        mAlert = new AlertController(context, this, getWindow(), this);
+        mAlert = new AlertController(getContext(), this, getWindow(), this);
     }
 
     protected AlertDialog(Context context, int theme) {
-        this(context, false, null, theme);
+        this(context, true, null, theme);
     }
 
     public Button getButton(int whichButton) {
@@ -442,6 +464,10 @@ public class AlertDialog extends Dialog implements DialogInterface,
     @Deprecated
     public void setButton3(CharSequence text, final OnClickListener listener) {
         setButton(DialogInterface.BUTTON_NEUTRAL, text, listener);
+    }
+
+    public void setButtonBehavior(int buttonBehavior) {
+        mAlert.setButtonBehavior(buttonBehavior);
     }
 
     public void setCustomTitle(View customTitleView) {
